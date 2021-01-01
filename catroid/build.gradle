@@ -42,7 +42,7 @@ repositories {
 
 ext {
     appId = 'org.catrobat.catroid.test'
-    appName = 'Pocket Code (BETA)'
+    appName = 'Pocket Code (BETA 1)'
     manifestAppName = '@string/app_name'
     manifestAppIcon = '@mipmap/ic_launcher'
 
@@ -76,13 +76,6 @@ if (rootProject.hasProperty('independent')) {
     def today = new Date()
     appId += '.independent_' + today.format('YYYYMMdd_HHmm')
     appName = rootProject.property('independent') ?: 'Code ' + today.format('MMdd HH:mm')
-    manifestAppName = appName
-}
-
-if (rootProject.hasProperty('playground') && rootProject.property('playground').toBoolean()) {
-    println "Playground build"
-    appId = 'org.catrobat.catroid.test'
-    appName = 'Pocket Code beta'
     manifestAppName = appName
 }
 
@@ -127,7 +120,7 @@ android {
         applicationId appId
         testInstrumentationRunner 'org.catrobat.catroid.runner.UiTestApplicationRunner'
         versionCode 81
-        versionName "0.9.76"
+        versionName "0.9.76 (BETA 1)"
         println "VersionCode is $versionCode"
         println "VersionName is $versionName"
         multiDexEnabled true
