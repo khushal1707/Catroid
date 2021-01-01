@@ -41,8 +41,8 @@ repositories {
 }
 
 ext {
-    appId = 'org.catrobat.catroid'
-    appName = '@string/app_name'
+    appId = 'org.catrobat.catroid.test'
+    appName = 'Pocket Code (BETA)'
     manifestAppName = '@string/app_name'
     manifestAppIcon = '@mipmap/ic_launcher'
 
@@ -171,7 +171,7 @@ android {
         resValue "string", "FEATURE_PHIRO_PREFERENCES_ENABLED", "false"
         resValue "string", "SNACKBAR_HINTS_ENABLED", "false"
         resValue "string", "DEBUG_MODE", "false"
-        buildConfigField "boolean", "BETA_RELEASE", "false"
+        buildConfigField "boolean", "BETA_RELEASE", "true"
     }
 
     lintOptions {
