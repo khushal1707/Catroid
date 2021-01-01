@@ -101,8 +101,9 @@ public class WebViewActivity extends AppCompatActivity {
 		String flavor = Constants.FLAVOR_DEFAULT;
 		String version = Utils.getVersionName(getApplicationContext());
 		String platform = Constants.PLATFORM_DEFAULT;
+		String buildType = (BuildConfig.BETA_RELEASE) ? "debug" : BuildConfig.BUILD_TYPE;
 		webView.getSettings().setUserAgentString("Catrobat/" + language + " " + flavor + "/"
-				+ version + " Platform/" + platform + " BuildType/" + BuildConfig.BUILD_TYPE);
+				+ version + " Platform/" + platform + " BuildType/" + buildType);
 
 		setLoginCookies(url, PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), CookieManager.getInstance());
 		webView.loadUrl(url);
