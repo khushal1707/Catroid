@@ -47,6 +47,7 @@ import org.catrobat.catroid.formulaeditor.SensorHandler;
 import org.catrobat.catroid.formulaeditor.UserDataWrapper;
 import org.catrobat.catroid.io.SoundManager;
 import org.catrobat.catroid.io.StageAudioFocus;
+import org.catrobat.catroid.io.XstreamSerializer;
 import org.catrobat.catroid.pocketmusic.mididriver.MidiSoundManager;
 import org.catrobat.catroid.ui.dialogs.StageDialog;
 import org.catrobat.catroid.ui.runtimepermissions.RequiresPermissionTask;
@@ -65,6 +66,23 @@ public final class StageLifeCycleController {
 	private StageLifeCycleController() {
 		throw new AssertionError("no.");
 	}
+
+	static void externalStageResume(final StageActivity stageActivity){
+		if (ProjectManager.getInstance().getCurrentProject() == null) {
+			stageActivity.finish();
+			Log.d(TAG, "no current project set, cowardly refusing to run");
+			return;
+		}
+		if (ProjectManager.getInstance().isCurrentProjectLandscapeMode()) {
+			stageActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		} else {
+			stageActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+		}
+
+		VibrationUtil.externalResume(stageActivity);
+
+	}
+
 
 	static void stageCreate(final StageActivity stageActivity) {
 		if (ProjectManager.getInstance().getCurrentProject() == null) {
@@ -239,6 +257,7 @@ public final class StageLifeCycleController {
 			if (service != null) {
 				service.destroy();
 			}
+			VibrationUtil.saveObjectToSharedPreference(stageActivity);
 			VibrationUtil.destroy();
 			if (stageActivity.cameraManager != null) {
 				stageActivity.cameraManager.destroy();

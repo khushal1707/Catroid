@@ -248,6 +248,12 @@ public class SpriteActivity extends BaseActivity {
 			}
 			return true;
 		}
+
+		//k
+		if(item.getItemId() == R.id.resume){
+			resumeStage();
+		}
+		//k
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -869,7 +875,16 @@ public class SpriteActivity extends BaseActivity {
 				.create();
 
 		alertDialog.show();
+
 	}
+	//k
+	private void resumeStage() {
+		while (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+			getSupportFragmentManager().popBackStack();
+		}
+		StageActivity.handleExternalResume(projectManager,this);
+	}
+	//k
 
 	public void handlePlayButton(View view) {
 		Fragment currentFragment = getCurrentFragment();

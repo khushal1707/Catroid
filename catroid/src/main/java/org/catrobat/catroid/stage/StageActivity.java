@@ -37,6 +37,7 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.util.SparseArray;
+import android.widget.Toast;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -64,6 +65,7 @@ import org.catrobat.catroid.nfc.NfcHandler;
 import org.catrobat.catroid.ui.MarketingActivity;
 import org.catrobat.catroid.ui.dialogs.StageDialog;
 import org.catrobat.catroid.ui.recyclerview.dialog.PlaySceneDialog;
+import org.catrobat.catroid.ui.recyclerview.fragment.ScriptFragment;
 import org.catrobat.catroid.ui.runtimepermissions.BrickResourcesToRuntimePermissions;
 import org.catrobat.catroid.ui.runtimepermissions.PermissionAdaptingActivity;
 import org.catrobat.catroid.ui.runtimepermissions.PermissionHandlingActivity;
@@ -84,11 +86,14 @@ import androidx.test.espresso.idling.CountingIdlingResource;
 import static org.catrobat.catroid.common.Constants.SCREENSHOT_AUTOMATIC_FILE_NAME;
 import static org.catrobat.catroid.stage.TestResult.TEST_RESULT_MESSAGE;
 
-public class StageActivity extends AndroidApplication implements PermissionHandlingActivity, PermissionAdaptingActivity {
+public class StageActivity extends AndroidApplication implements PermissionHandlingActivity,
+		PermissionAdaptingActivity {
 
 	public static final String TAG = StageActivity.class.getSimpleName();
 	public static StageListener stageListener;
-
+	//k
+	public static boolean EXTERNAL_RESUME_STAGE = false;
+	//k
 	public static final int REQUEST_START_STAGE = 101;
 
 	public static final int REGISTER_INTENT = 0;
@@ -123,7 +128,11 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StageLifeCycleController.stageCreate(this);
+		if(EXTERNAL_RESUME_STAGE){
+			StageLifeCycleController.externalStageResume(this);
+		} else {
+			StageLifeCycleController.stageCreate(this);
+		}
 		activeStageActivity = new WeakReference<>(this);
 	}
 
@@ -470,7 +479,23 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 		}
 	}
 
+	//k
+	public static void handleExternalResume(ProjectManager projectManager, final Activity activity) {
+		Scene currentScene = projectManager.getCurrentlyEditedScene();
+		projectManager.setCurrentlyPlayingScene(currentScene);
+		projectManager.setStartScene(currentScene);
+		resumeStageActivity(activity);
+	}
+	//k
+
+	private static void resumeStageActivity(Activity activity){
+		EXTERNAL_RESUME_STAGE = true;
+		Intent intent = new Intent(activity, StageActivity.class);
+		activity.startActivityForResult(intent, StageActivity.REQUEST_START_STAGE);
+	}
+
 	private static void startStageActivity(Activity activity) {
+		EXTERNAL_RESUME_STAGE = false;
 		Intent intent = new Intent(activity, StageActivity.class);
 		activity.startActivityForResult(intent, StageActivity.REQUEST_START_STAGE);
 	}
@@ -491,4 +516,5 @@ public class StageActivity extends AndroidApplication implements PermissionHandl
 			stageActivity.finish();
 		}
 	}
+
 }

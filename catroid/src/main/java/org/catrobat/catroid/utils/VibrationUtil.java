@@ -22,11 +22,19 @@
  */
 package org.catrobat.catroid.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.catrobat.catroid.R;
+import org.catrobat.catroid.stage.StageActivity;
+
 import java.util.concurrent.Semaphore;
+
+import static org.catrobat.catroid.ui.settingsfragments.SettingsFragment.SETTINGS_PARROT_AR_DRONE_CATROBAT_TERMS_OF_SERVICE_ACCEPTED_PERMANENTLY;
 
 public final class VibrationUtil {
 
@@ -97,8 +105,34 @@ public final class VibrationUtil {
 		paused = false;
 	}
 
+	public static void saveObjectToSharedPreference(Context context) {
+		PreferenceManager.getDefaultSharedPreferences(context)
+				.edit()
+				.putLong("savedTimeToVibrateForResume",savedTimeToVibrate)
+				.putLong("startTimeForResume",startTime)
+				.apply();
+	}
+
+	public static void externalResume(Context context) {
+		startTime = PreferenceManager.getDefaultSharedPreferences(context).getLong(
+				"startTimeForResume",0L);
+		timeToVibrate = PreferenceManager.getDefaultSharedPreferences(context).getLong(
+				"savedTimeToVibrateForResume",0L);
+		Log.d(TAG, "savedTimeToVibrate = " + savedTimeToVibrate);
+		savedTimeToVibrate = 0;
+		keepAlive = true;
+		activateVibrationThread();
+		if (timeToVibrate > 0) {
+			vibrationThreadSemaphore.release();
+		} else {
+			Log.d(TAG, "nothing to do");
+		}
+	}
+
+
 	public static void destroy() {
 		Log.d(TAG, "reset() - called by StageActivity::onDestroy");
+
 		startTime = 0L;
 		timeToVibrate = 0L;
 		savedTimeToVibrate = 0L;
